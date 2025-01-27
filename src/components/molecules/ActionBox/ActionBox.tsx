@@ -12,7 +12,7 @@ const ActionBox = () => {
     setActiveButton(buttonType);
 
     if (buttonType === 'edit') {
-      navigate(PATH.CHANGE.PROFILE);
+      navigate(`/${PATH.CHANGE.PROFILE}`);
     }
   };
 

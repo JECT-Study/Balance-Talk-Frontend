@@ -10,6 +10,7 @@ export interface MyContentBoxProps {
   showBookmark?: boolean;
   bookmarked?: BookmarkProps['bookmarked'];
   onClick: () => void;
+  onBookmarkClick?: () => void;
 }
 const MyContentBox = ({
   title,
@@ -18,6 +19,7 @@ const MyContentBox = ({
   showBookmark = false,
   bookmarked = false,
   onClick,
+  onBookmarkClick,
 }: MyContentBoxProps) => {
   return (
     <button type="button" css={S.infoContainer} onClick={onClick}>
@@ -27,7 +29,14 @@ const MyContentBox = ({
       <InfoLabel label="톡댓톡" count={commentCount} />
       <InfoLabel label="저장" count={bookmarks} />
       {showBookmark && (
-        <Bookmark bookmarked={bookmarked} css={S.bookmarkWrapper} />
+        <Bookmark
+          bookmarked={bookmarked}
+          css={S.bookmarkWrapper}
+          onClick={(e) => {
+            e.stopPropagation();
+            onBookmarkClick?.();
+          }}
+        />
       )}
     </button>
   );

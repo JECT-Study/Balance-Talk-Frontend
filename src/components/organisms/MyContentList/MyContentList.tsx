@@ -1,23 +1,15 @@
 import React, { useMemo } from 'react';
 import MyContentBox from '@/components/molecules/MyContentBox/MyContentBox';
 import { useNavigate } from 'react-router-dom';
+import { MyContentItem } from '@/types/mypages';
 import * as S from './MyContentList.style';
-
-export interface MyContentItem {
-  id: number;
-  editedAt: string;
-  title: string;
-  commentCount: number;
-  bookmarks: number;
-  showBookmark?: boolean;
-  bookmarked?: boolean;
-}
 
 export interface MyContentListProps {
   items: MyContentItem[];
+  onBookmarkClick?: (item: MyContentItem) => void;
 }
 
-const MyContentList = ({ items = [] }: MyContentListProps) => {
+const MyContentList = ({ items = [], onBookmarkClick }: MyContentListProps) => {
   const navigate = useNavigate();
 
   const groupedItems = useMemo(() => {
@@ -43,27 +35,19 @@ const MyContentList = ({ items = [] }: MyContentListProps) => {
         <section key={date} css={S.dateWrapper}>
           <span css={S.dateLabel}>{date}</span>
           <ul css={S.contentList}>
-            {contentItems.map(
-              ({
-                id,
-                title,
-                commentCount,
-                bookmarks,
-                showBookmark,
-                bookmarked,
-              }) => (
-                <li key={id} css={S.contentItem}>
-                  <MyContentBox
-                    title={title}
-                    commentCount={commentCount}
-                    bookmarks={bookmarks}
-                    showBookmark={showBookmark}
-                    bookmarked={bookmarked}
-                    onClick={() => handleItemClick(id)}
-                  />
-                </li>
-              ),
-            )}
+            {contentItems.map((item) => (
+              <li key={item.id} css={S.contentItem}>
+                <MyContentBox
+                  title={item.title}
+                  commentCount={item.commentCount}
+                  bookmarks={item.bookmarks}
+                  showBookmark={item.showBookmark}
+                  bookmarked={item.bookmarked}
+                  onBookmarkClick={() => onBookmarkClick?.(item)}
+                  onClick={() => handleItemClick(item.id)}
+                />
+              </li>
+            ))}
           </ul>
         </section>
       ))}

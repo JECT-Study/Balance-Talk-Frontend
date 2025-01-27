@@ -34,10 +34,12 @@ export interface Game {
   mainTag: string;
   subTag: string;
   images: string[];
-  bookmarkState?: boolean;
+  showBookmark?: boolean;
+  bookmarked?: boolean;
 }
 
 export interface GameContent extends Game {
+  writerId: number;
   id: number;
 }
 

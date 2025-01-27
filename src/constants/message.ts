@@ -43,6 +43,8 @@ export const ERROR = {
     MY_GAME: '본인이 만든 밸런스게임은 저장할 수 없습니다.',
     GAME_FAIL: '게임 북마크에 실패했습니다.',
     GAME_DELETE_FAIL: '게임 북마크 삭제에 실패했습니다.',
+    POST_MUTATE_FAIL: '컨텐츠가 벌써 떠나 버렸어요ㅠㅠ',
+    DELETE_MUTATE_FAIL: '저장 해제에 실패했어요.',
   },
   TEMPGAME: {
     LOAD: '임시 저장 데이터를 불러오는 데 실패했습니다.',
@@ -83,6 +85,10 @@ export const SUCCESS = {
   },
   COMMENT: {
     REPORT: '신고 완료되었습니다.',
+  },
+  BOOKMARK: {
+    POST_MUTATE_SUCCESS: '다시 저장했어요.',
+    DELETE_MUTATE_SUCCESS: '저장을 해제했어요.',
   },
   EDIT_PROFILE: '수정 완료 되었습니다!',
   POST: {

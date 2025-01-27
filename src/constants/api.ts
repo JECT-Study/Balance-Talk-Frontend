@@ -54,11 +54,11 @@ export const END_POINT = {
   MYPAGES_TALKS_BOOKMARKS: (page: number, size: number) =>
     `/my/talks/bookmarks?page=${page}&size=${size}`,
   MYPAGES_GAMES_WRITTEN: (page: number, size: number) =>
-    `/my/games/written?page=${page}&size=${size}`,
+    `/my/game-sets/written?page=${page}&size=${size}`,
   MYPAGES_GAMES_VOTES: (page: number, size: number) =>
-    `/my/games/votes?page=${page}&size=${size}`,
+    `/my/game-sets/votes?page=${page}&size=${size}`,
   MYPAGES_GAMES_BOOKMARKS: (page: number, size: number) =>
-    `/my/games/bookmarks?page=${page}&size=${size}`,
+    `/my/game-sets/bookmarks?page=${page}&size=${size}`,
 
   // search API
   SEARCH_GAME: (query: string, page: number, size: number, sort: string) =>

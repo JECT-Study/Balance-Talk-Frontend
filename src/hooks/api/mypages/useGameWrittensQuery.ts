@@ -1,7 +1,12 @@
 import { getGameWritten } from '@/api/mypages';
-import { GameWritten } from '@/types/mypages';
-import { MyBalanceGameItem } from '@/components/organisms/MyBalanceGameList/MyBalanceGameList';
+import { GameWritten, MyBalanceGameItem } from '@/types/mypages';
 import { useInfiniteScroll } from '@/hooks/api/mypages/useInfiniteScroll';
+import { InfiniteData } from '@tanstack/react-query';
+import { transformGameWrittenItem } from '@/utils/transformBalanceGame';
+
+type GameWrittenTransformed = Omit<GameWritten, 'content'> & {
+  content: MyBalanceGameItem[];
+};
 
 export const useGameWrittensQuery = () => {
   const {
@@ -10,28 +15,20 @@ export const useGameWrittensQuery = () => {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-  } = useInfiniteScroll<GameWritten>(
+  } = useInfiniteScroll<GameWritten, GameWrittenTransformed>(
     ['gameWritten'],
-    ({ pageParam = 0 }) => getGameWritten(pageParam, 20),
-    (data) => {
-      const firstPage = data.pages[0];
+
+    async ({ pageParam = 0 }) => {
+      return getGameWritten(pageParam, 20);
+    },
+
+    (infiniteData: InfiniteData<GameWritten>): GameWrittenTransformed => {
+      const firstPage = infiniteData.pages[0];
       return {
-        content: data.pages.flatMap((page) =>
-          page.content.map((item: MyBalanceGameItem) => ({
-            ...item,
-            showBookmark: false,
-          })),
+        ...firstPage,
+        content: infiniteData.pages.flatMap((page) =>
+          page.content.map((item) => transformGameWrittenItem(item)),
         ),
-        pageable: firstPage.pageable,
-        totalPages: firstPage.totalPages,
-        totalElements: firstPage.totalElements,
-        last: firstPage.last,
-        size: firstPage.size,
-        number: firstPage.number,
-        sort: firstPage.sort,
-        numberOfElements: firstPage.numberOfElements,
-        first: firstPage.first,
-        empty: firstPage.empty,
       };
     },
   );

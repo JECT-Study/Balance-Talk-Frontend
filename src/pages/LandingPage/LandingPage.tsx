@@ -1,23 +1,37 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TopBanner from '@/components/molecules/TopBanner/TopBanner';
 import SearchTagBar from '@/components/molecules/SearchTagBar/SearchTagBar';
 import CategoryBox from '@/components/molecules/CategoryBox/CategoryBox';
 import BalanceGameList from '@/components/organisms/BalanceGameList/BalanceGameList';
-import { useNavigate } from 'react-router-dom';
 import ToastModal from '@/components/atoms/ToastModal/ToastModal';
+import FloatingMenuButton from '@/components/mobile/molecules/FloatingMenuButton/FloatingMenuButton';
+import LoginModal from '@/components/molecules/LoginModal/LoginModal';
+import { useTodayTalkPickQuery } from '@/hooks/api/talk-pick/useTodayTalkPickQuery';
 import { useBestGameList } from '@/hooks/api/game/useBestGameListQuery';
 import { useLatestGameList } from '@/hooks/api/game/useLatestGameListQuery';
-import { ToggleGroupValue } from '@/types/toggle';
-import { NOTICE } from '@/constants/message';
-import FloatingMenuButton from '@/components/mobile/molecules/FloatingMenuButton/FloatingMenuButton';
 import useIsMobile from '@/hooks/common/useIsMobile';
+import { useMemberQuery } from '@/hooks/api/member/useMemberQuery';
+import { isLoggedIn } from '@/utils/auth';
+import { useLandingPageCreateBookmarkMutation } from '@/hooks/api/bookmark/useLandingPageCreateBookmarkMutation';
+import { useLandingPageDeleteBookmarkMutation } from '@/hooks/api/bookmark/useLandingPageDeleteBookmarkMutation';
+import useModal from '@/hooks/modal/useModal';
+import useToastModal from '@/hooks/modal/useToastModal';
+import { GameContent } from '@/types/game';
+import { ToggleGroupValue } from '@/types/toggle';
+import { NOTICE, SUCCESS } from '@/constants/message';
 import { useTodayBalanceGameList } from '@/hooks/game/useTodayBalanceGameList';
 import { todayTalkPickDummyData } from '@/mocks/data/banner';
-import { useTodayTalkPickQuery } from '@/hooks/api/talk-pick/useTodayTalkPickQuery';
 import * as S from './LandingPage.style';
 
 const LandingPage = () => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const { isOpen: isLoginModalOpen, openModal, closeModal } = useModal();
+  const { isVisible, modalText, showToastModal } = useToastModal();
+
+  const { member } = useMemberQuery();
+
   const { todayTalkPickList = todayTalkPickDummyData } =
     useTodayTalkPickQuery();
   const { todayBalanceGameList } = useTodayBalanceGameList();
@@ -48,6 +62,14 @@ const LandingPage = () => {
     return [];
   }, [isBestGamesEnabled, isLatestGamesEnabled, bestGames, latestGames]);
 
+  const processedContents = useMemo(() => {
+    if (!member?.id) return [];
+    return contents.map((item: GameContent) => ({
+      ...item,
+      showBookmark: item.writerId !== member.id,
+    }));
+  }, [contents, member?.id]);
+
   const handleService = () => {
     setIsServicePreparing(true);
 
@@ -56,14 +78,51 @@ const LandingPage = () => {
     }, 2000);
   };
 
-  const navigate = useNavigate();
-
   const handleSearch = (query: string) => {
     navigate(`/result/search/all?query=${query}`);
   };
 
+  const handleLogin = () => {
+    showToastModal(SUCCESS.LOGIN);
+    closeModal();
+  };
+
+  const createBookmark = useLandingPageCreateBookmarkMutation(activeTab);
+  const deleteBookmark = useLandingPageDeleteBookmarkMutation(activeTab);
+
+  const handleBookmarkClick = useCallback(
+    (content: GameContent) => {
+      if (!content.id) return;
+
+      if (!isLoggedIn()) {
+        openModal();
+        return;
+      }
+
+      if (content.bookmarked) {
+        deleteBookmark.mutate(content.id, {
+          onError: () => {
+            showToastModal('북마크 해제에 실패했습니다.');
+          },
+        });
+      } else {
+        createBookmark.mutate(content.id, {
+          onError: () => {
+            showToastModal('북마크 등록에 실패했습니다.');
+          },
+        });
+      }
+    },
+    [createBookmark, deleteBookmark, openModal, showToastModal],
+  );
+
   return (
     <div css={S.pageWrapperStyle}>
+      {isVisible && (
+        <div css={S.toastModalStyling}>
+          <ToastModal>{modalText}</ToastModal>
+        </div>
+      )}
       {isServicePreparing && (
         <div css={S.toastModalStyling}>
           <ToastModal bgColor="white">{NOTICE.STATUS.NOT_READY}</ToastModal>
@@ -83,11 +142,12 @@ const LandingPage = () => {
           </div>
           <BalanceGameList
             isMobile
-            contents={contents}
+            contents={processedContents}
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
+            onBookmarkClick={handleBookmarkClick}
           />
           <div css={S.floatingDropdownStyle}>
             <FloatingMenuButton />
@@ -100,13 +160,21 @@ const LandingPage = () => {
             <CategoryBox handleService={handleService} />
           </div>
           <BalanceGameList
-            contents={contents}
+            contents={processedContents}
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
+            onBookmarkClick={handleBookmarkClick}
           />
         </div>
+      )}
+      {isLoginModalOpen && (
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={closeModal}
+          onModalLoginSuccess={handleLogin}
+        />
       )}
     </div>
   );

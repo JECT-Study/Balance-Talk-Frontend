@@ -1,17 +1,8 @@
 import React, { useMemo } from 'react';
 import InfoBox from '@/components/molecules/InfoBox/InfoBox';
 import { useNavigate } from 'react-router-dom';
+import { InfoItem } from '@/types/mypages';
 import * as S from './InfoList.style';
-
-export interface InfoItem {
-  id: number;
-  editedAt: string;
-  title: string;
-  prefix: string;
-  commentContent: string;
-  commentCount: number;
-  bookmarks: number;
-}
 
 export interface InfoListProps {
   items: InfoItem[];
@@ -44,19 +35,12 @@ const InfoList = ({ items = [] }: InfoListProps) => {
           <span css={S.dateLabel}>{editedAt}</span>
           <ul css={S.infoList}>
             {groupedItems[editedAt].map(
-              ({
-                id,
-                title,
-                prefix,
-                commentContent,
-                commentCount,
-                bookmarks,
-              }) => (
+              ({ id, title, prefix, content, commentCount, bookmarks }) => (
                 <li key={id} css={S.infoItem}>
                   <InfoBox
                     title={title}
                     prefix={prefix}
-                    commentContent={commentContent}
+                    commentContent={content}
                     commentCount={commentCount}
                     bookmarks={bookmarks}
                     onClick={() => handleItemClick(id)}

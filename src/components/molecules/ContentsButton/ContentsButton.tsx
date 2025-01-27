@@ -1,20 +1,46 @@
-import React, { ComponentPropsWithRef } from 'react';
+import React, { ComponentPropsWithRef, useMemo } from 'react';
 import Chips from '@/components/atoms/Chips/Chips';
 import Bookmark, { BookmarkProps } from '@/components/atoms/Bookmark/Bookmark';
 import { highlightText } from '@/utils/highlightText';
+import {
+  RandomBlackFrame,
+  RandomBlueFrame,
+  RandomGreenFrame,
+  RandomPinkFrame,
+  RandomPurpleFrame,
+  RandomTealFrame,
+} from '@/assets';
+import { getRandomNumbers } from '@/utils/calculator';
 import * as S from './ContentsButton.style';
 
 export interface ContentsButtonProps extends ComponentPropsWithRef<'button'> {
   title: string;
   mainTag: string;
-  subTag: string;
+  subTag?: string;
   images: string[];
   bookmarked?: BookmarkProps['bookmarked'];
   showBookmark?: boolean;
   size?: 'large' | 'medium' | 'small' | 'extraSmall';
   keyword?: string;
   onClick: () => void;
+  onBookmarkClick?: () => void;
 }
+
+const randomImages = [
+  RandomBlackFrame,
+  RandomBlueFrame,
+  RandomGreenFrame,
+  RandomPinkFrame,
+  RandomPurpleFrame,
+  RandomTealFrame,
+];
+
+const useRandomImagePair = () => {
+  return useMemo(() => {
+    const randomIndexes = getRandomNumbers(randomImages.length);
+    return [randomImages[randomIndexes[0]], randomImages[randomIndexes[1]]];
+  }, []);
+};
 
 const ContentsButton = ({
   title,
@@ -26,8 +52,16 @@ const ContentsButton = ({
   bookmarked = false,
   showBookmark = true,
   onClick,
+  onBookmarkClick,
   ...attributes
 }: ContentsButtonProps) => {
+  const validImages = images?.filter(Boolean);
+
+  const memoizedRandomPair = useRandomImagePair();
+
+  const displayImages =
+    !validImages || validImages.length === 0 ? memoizedRandomPair : validImages;
+
   return (
     <button
       type="button"
@@ -37,13 +71,13 @@ const ContentsButton = ({
     >
       <div css={S.imageContainer(size)}>
         <div css={S.imageWrapper}>
-          <img src={images[0]} alt="option A" css={S.image} />
+          <img src={displayImages[0]} alt="option A" css={S.image} />
         </div>
         <div css={S.imageWrapper}>
-          <img src={images[1]} alt="option B" css={S.image} />
+          <img src={displayImages[1]} alt="option B" css={S.image} />
         </div>
         <div css={S.chipsContainer}>
-          <Chips>{subTag}</Chips>
+          {subTag?.trim() && <Chips>{subTag}</Chips>}
           <Chips>{`#${mainTag}`}</Chips>
         </div>
       </div>
@@ -54,7 +88,14 @@ const ContentsButton = ({
           </span>
         ))}
         {showBookmark && (
-          <Bookmark bookmarked={bookmarked} css={S.bookmarkWrapper} />
+          <Bookmark
+            bookmarked={bookmarked}
+            css={S.bookmarkWrapper}
+            onClick={(e) => {
+              e.stopPropagation();
+              onBookmarkClick?.();
+            }}
+          />
         )}
       </div>
     </button>

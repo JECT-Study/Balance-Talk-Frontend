@@ -1,7 +1,12 @@
 import { getMyWritten } from '@/api/mypages';
-import { MyWritten } from '@/types/mypages';
-import { MyContentItem } from '@/components/organisms/MyContentList/MyContentList';
+import { MyContentItem, MyWritten } from '@/types/mypages';
 import { useInfiniteScroll } from '@/hooks/api/mypages/useInfiniteScroll';
+import { transformWrittenItem } from '@/utils/transformTalkPick';
+import { InfiniteData } from '@tanstack/react-query';
+
+type MyWrittenTransformed = Omit<MyWritten, 'content'> & {
+  content: MyContentItem[];
+};
 
 export const useMyWrittensQuery = () => {
   const {
@@ -10,28 +15,21 @@ export const useMyWrittensQuery = () => {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-  } = useInfiniteScroll<MyWritten>(
+  } = useInfiniteScroll<MyWritten, MyWrittenTransformed>(
     ['myWritten'],
-    ({ pageParam = 0 }) => getMyWritten(pageParam, 20),
-    (data) => {
-      const firstPage = data.pages[0];
+
+    async ({ pageParam = 0 }) => {
+      return getMyWritten(pageParam, 20);
+    },
+
+    (infiniteData: InfiniteData<MyWritten>): MyWrittenTransformed => {
+      const firstPage = infiniteData.pages[0];
+
       return {
-        content: data.pages.flatMap((page) =>
-          page.content.map((item: MyContentItem) => ({
-            ...item,
-            showBookmark: false,
-          })),
+        ...firstPage,
+        content: infiniteData.pages.flatMap((page) =>
+          page.content.map((item) => transformWrittenItem(item)),
         ),
-        pageable: firstPage.pageable,
-        totalPages: firstPage.totalPages,
-        totalElements: firstPage.totalElements,
-        last: firstPage.last,
-        size: firstPage.size,
-        number: firstPage.number,
-        sort: firstPage.sort,
-        numberOfElements: firstPage.numberOfElements,
-        first: firstPage.first,
-        empty: firstPage.empty,
       };
     },
   );

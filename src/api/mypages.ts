@@ -6,10 +6,8 @@ import {
   MyComment,
   MyVote,
   MyWritten,
-  SideBar,
 } from '@/types/mypages';
 import { END_POINT } from '@/constants/api';
-import { Id } from '@/types/api';
 import { axiosInstance } from './interceptor';
 
 export const getMyWritten = async (page: number, size: number) => {
@@ -58,10 +56,5 @@ export const getGameBookmark = async (page: number, size: number) => {
   const { data } = await axiosInstance.get<GameBookmark>(
     END_POINT.MYPAGES_GAMES_BOOKMARKS(page, size),
   );
-  return data;
-};
-
-export const getMyInfo = async (memberId: Id): Promise<SideBar> => {
-  const { data } = await axiosInstance.get<SideBar>(`/members/${memberId}`);
   return data;
 };

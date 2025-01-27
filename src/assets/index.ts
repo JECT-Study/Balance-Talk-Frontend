@@ -126,6 +126,12 @@ export { default as MobileGameBannerFirst } from './images/mo-game-banner-first.
 export { default as MobileGameBannerSecond } from './images/mo-game-banner-second.png';
 export { default as RedCheckIcon } from './svg/red-check-icon.svg';
 export { default as BlueCheckIcon } from './svg/blue-check-icon.svg';
+export { default as RandomBlackFrame } from './images/random-black-frame.png';
+export { default as RandomBlueFrame } from './images/random-blue-frame.png';
+export { default as RandomGreenFrame } from './images/random-green-frame.png';
+export { default as RandomPinkFrame } from './images/random-pink-frame.png';
+export { default as RandomPurpleFrame } from './images/random-purple-frame.png';
+export { default as RandomTealFrame } from './images/random-teal-frame.png';
 export { default as StatusNotRequired } from './svg/status-not-required.svg';
 export { default as StatusFail } from './svg/status-fail.svg';
 export { default as SadEmoji } from './svg/sad-emoji.svg';

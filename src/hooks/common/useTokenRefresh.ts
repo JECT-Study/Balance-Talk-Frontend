@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import { useQueryClient } from '@tanstack/react-query';
 import { getRefreshToken } from '@/api/interceptor';
 import { useNewDispatch, useNewSelector } from '@/store';
 import { selectAccessToken, tokenActions } from '@/store/auth';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +15,10 @@ export const useTokenRefresh = () => {
 
   useEffect(() => {
     const tokenRefresh = async () => {
-      if (accessToken) return;
+      if (accessToken) {
+        dispatch(tokenActions.setRefreshing(false));
+        return;
+      }
 
       try {
         const newAccessToken = await getRefreshToken();
@@ -26,6 +29,8 @@ export const useTokenRefresh = () => {
         });
       } catch (error) {
         dispatch(tokenActions.deleteToken());
+      } finally {
+        dispatch(tokenActions.setRefreshing(false));
       }
     };
     tokenRefresh().catch((error) => {

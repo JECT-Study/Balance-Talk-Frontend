@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BUTTON_TEXT, MAX_STAGE } from '@/constants/game';
+import { GameSet } from '@/types/game';
 import ToastModal from '@/components/atoms/ToastModal/ToastModal';
 import Button from '@/components/mobile/atoms/Button/Button';
 import GameStageLabel from '@/components/mobile/atoms/GameStageLabel/GameStageLabel';
@@ -12,7 +13,13 @@ import TempGameModal from '@/components/mobile/molecules/TempGameModal/TempGameM
 import { usePostBalanceGameForm } from '@/hooks/game/usePostBalanceGameForm';
 import * as S from './BalanceGameCreateSection.style';
 
-const BalanceGameCreateSection = () => {
+interface BalanceGameCreateSectionProps {
+  existingGame?: GameSet;
+}
+
+const BalanceGameCreateSection = ({
+  existingGame,
+}: BalanceGameCreateSectionProps) => {
   const [gameStage, setGameStage] = useState<number>(0);
 
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
@@ -34,7 +41,12 @@ const BalanceGameCreateSection = () => {
     handleBalanceGame,
     handleTempBalanceGame,
     handleDraftButton,
-  } = usePostBalanceGameForm(gameStage, setGameStage, setTagModalOpen);
+  } = usePostBalanceGameForm(
+    gameStage,
+    setGameStage,
+    setTagModalOpen,
+    existingGame,
+  );
 
   return (
     <form css={S.balanceGameStyling}>

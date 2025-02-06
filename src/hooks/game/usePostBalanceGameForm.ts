@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { BalanceGame, TempGame } from '@/types/game';
+import { BalanceGame, GameSet, TempGame } from '@/types/game';
 import {
   createInitialGameStages,
   transformBalanceGameToTempGame,
+  transformGameSetToBalanceGameSet,
   transformTempGameToBalanceGame,
 } from '@/utils/balanceGameUtils';
 import { SUCCESS } from '@/constants/message';
@@ -22,9 +23,13 @@ export const usePostBalanceGameForm = (
   gameStage: number,
   setGameStage: React.Dispatch<React.SetStateAction<number>>,
   setTagModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  existingGame?: GameSet,
 ) => {
+  const existingBalanceGame =
+    existingGame && transformGameSetToBalanceGameSet(existingGame);
+
   const defaultGameOptions = createInitialGameStages(10);
-  const initialState: BalanceGame = {
+  const initialState: BalanceGame = existingBalanceGame ?? {
     title: '',
     mainTag: '',
     subTag: '',

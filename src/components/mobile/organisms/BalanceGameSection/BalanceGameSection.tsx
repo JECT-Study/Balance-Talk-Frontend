@@ -99,7 +99,15 @@ const BalanceGameSection = ({
     game,
   );
 
-  const myGameItem: MenuItem[] = [{ label: '수정' }, { label: '삭제' }];
+  const myGameItem: MenuItem[] = [
+    {
+      label: '수정',
+      onClick: () => {
+        navigate(`/${PATH.CREATE.GAME}`, { state: { game } });
+      },
+    },
+    { label: '삭제' },
+  ];
   const otherGameItem: MenuItem[] = [{ label: '신고' }];
 
   return (

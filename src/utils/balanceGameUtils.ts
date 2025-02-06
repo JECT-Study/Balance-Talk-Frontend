@@ -109,3 +109,24 @@ export const transformTempGameToBalanceGame = (
     })),
   })),
 });
+
+export const transformGameSetToBalanceGameSet = (
+  gameSet: GameSet,
+): BalanceGame => {
+  return {
+    title: gameSet.title,
+    mainTag: gameSet.mainTag,
+    subTag: gameSet.subTag,
+    games: gameSet.gameDetailResponses.map((gameDetail) => ({
+      description: gameDetail.description ?? '',
+      gameOptions: gameDetail.gameOptions.map((option) => ({
+        id: option.id,
+        name: option.name,
+        imgUrl: option.imgUrl ?? '',
+        description: option.description,
+        optionType: option.optionType,
+        fileId: option.fileId ?? null,
+      })),
+    })),
+  };
+};

@@ -79,7 +79,8 @@ const BalanceGameCreateSection = () => {
             }}
             onConfirm={() => {
               handleDeleteImg(
-                form.games[gameStage].gameOptions[selectedOptionId].fileId,
+                form.games[gameStage].gameOptions[selectedOptionId].fileId ??
+                  null,
                 selectedOptionId,
               );
               setImgDeleteModalOpen(false);

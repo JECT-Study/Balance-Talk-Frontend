@@ -8,6 +8,7 @@ import MyPage from '@/pages/MyPage/MyPage';
 import SearchGamePage from '@/pages/SearchResultsPage/SearchGamePage';
 import SearchTalkPickPage from '@/pages/SearchResultsPage/SearchTalkPickPage';
 import NotificationPage from '@/pages/mobile/NotificationPage/NotificationPage';
+import BalanceGameCategoriesPage from '@/pages/mobile/BalanceGameCategoriesPage/BalanceGameCategoriesPage';
 import BalanceGameLayout from '@/pages/MyPage/BalanceGameLayout';
 import TalkPickLayout from '@/pages/MyPage/TalkPickLayout';
 import TalkPickBookmarks from '@/pages/MyPage/TalkPick/TalkPickBookmarks';
@@ -95,6 +96,10 @@ const App: React.FC = () => {
           <Route
             path={PATH.BALANCEGAME.VIEW()}
             element={isMobile ? <BalanceGameMobilePage /> : <BalanceGamePage />}
+          />
+          <Route
+            path={PATH.BALANCEGAMECATEGORIES}
+            element={<BalanceGameCategoriesPage />}
           />
           {/* <Route path="/search" element={<SearchResultsPage />} /> */}
           {/* <Route path="posts" element={<PostList />} />

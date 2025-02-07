@@ -14,7 +14,7 @@ const SearchGameList = ({ gameList, keyword }: SearchGameListProps) => {
   const navigate = useNavigate();
 
   const handleItemClick = (gameId: number) => {
-    navigate(`/${PATH.BALANCEGAME(gameId)}`);
+    navigate(`/${PATH.BALANCEGAME.VIEW(gameId)}`);
   };
 
   return (

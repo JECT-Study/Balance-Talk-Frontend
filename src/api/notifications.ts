@@ -62,7 +62,6 @@ export const useFetchSSE = () => {
   const handleMarkAsRead = useCallback(async (notificationId: number) => {
     try {
       await postNotification(notificationId);
-
       setMessages((prevMessages) =>
         prevMessages.map((message) => {
           if (message.id !== notificationId) return message;

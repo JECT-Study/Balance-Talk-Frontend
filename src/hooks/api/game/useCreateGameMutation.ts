@@ -22,7 +22,7 @@ export const useCreateGameMutation = (
         queryKey: ['games'],
       });
       showToastModal(SUCCESS.CREATEGAME.CREATE, () => {
-        navigate(`/${PATH.BALANCEGAME(gameId)}`);
+        navigate(`/${PATH.BALANCEGAME.VIEW(gameId)}`);
       });
     },
     onError: (err: AxiosErrorResponse) => {

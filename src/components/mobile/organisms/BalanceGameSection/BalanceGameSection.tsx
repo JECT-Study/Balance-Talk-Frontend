@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MobileBookmarkDF, MobileBookmarkPR, MobileShare } from '@/assets';
 import { useNavigate } from 'react-router-dom';
+import { useNewSelector } from '@/store';
+import { selectAccessToken } from '@/store/auth';
 import { GameDetail, GameSet } from '@/types/game';
 import { PATH } from '@/constants/path';
+import { ERROR } from '@/constants/message';
 import MenuTap, { MenuItem } from '@/components/atoms/MenuTap/MenuTap';
 import useToastModal from '@/hooks/modal/useToastModal';
 import { VoteRecord } from '@/types/vote';
@@ -15,7 +18,9 @@ import ToastModal from '@/components/atoms/ToastModal/ToastModal';
 import BalanceGameBox from '@/components/mobile/molecules/BalanceGameBox/BalanceGameBox';
 import { useGuestGameVote } from '@/hooks/game/useBalanceGameVote';
 import { useGameBookmark } from '@/hooks/game/useBalanceGameBookmark';
-import ShareModal from '../../molecules/ShareModal/ShareModal';
+import { useDeleteGameSetMutation } from '@/hooks/api/game/useDeleteGameSetMutation';
+import ShareModal from '@/components/mobile/molecules/ShareModal/ShareModal';
+import TextModal from '@/components/mobile/molecules/TextModal/TextModal';
 import * as S from './BalanceGameSection.style';
 
 export interface BalanceGameSectionProps {
@@ -51,7 +56,7 @@ const BalanceGameSection = ({
 
   const gameStages: GameDetail[] =
     game?.gameDetailResponses ?? gameDefaultDetail;
-  const isGuest = !localStorage.getItem('accessToken');
+  const isGuest = !useNewSelector(selectAccessToken);
 
   const [guestVotedList, setGuestVotedList] = useState<VoteRecord[]>([]);
 
@@ -65,7 +70,9 @@ const BalanceGameSection = ({
   );
 
   const [shareModalOpen, setShareModalOpen] = useState<boolean>(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const { isVisible, modalText, showToastModal } = useToastModal();
+  const { mutate: deleteBalanceGame } = useDeleteGameSetMutation();
 
   useEffect(() => {
     if (game && initialRender.current) {
@@ -89,6 +96,20 @@ const BalanceGameSection = ({
     changeStage(1);
   };
 
+  const handleGameDeleteButton = () => {
+    deleteBalanceGame(
+      { gameSetId },
+      {
+        onSuccess: () => {
+          navigate('/');
+        },
+        onError: () => {
+          showToastModal(ERROR.DELETEGAME.FAIL);
+        },
+      },
+    );
+  };
+
   const { handleBookmarkClick } = useGameBookmark(
     isGuest,
     isMyGame,
@@ -106,7 +127,12 @@ const BalanceGameSection = ({
         navigate(`/${PATH.CREATE.GAME}`, { state: { game, gameSetId } });
       },
     },
-    { label: '삭제' },
+    {
+      label: '삭제',
+      onClick: () => {
+        setDeleteModalOpen(true);
+      },
+    },
   ];
   const otherGameItem: MenuItem[] = [{ label: '신고' }];
 
@@ -122,6 +148,12 @@ const BalanceGameSection = ({
           isOpen={shareModalOpen}
           onConfirm={() => {}}
           onClose={() => setShareModalOpen(false)}
+        />
+        <TextModal
+          text="해당 게임을 삭제하시겠습니까?"
+          isOpen={deleteModalOpen}
+          onConfirm={handleGameDeleteButton}
+          onClose={() => setDeleteModalOpen(false)}
         />
       </div>
       <div css={S.balancGameTopWrapper}>

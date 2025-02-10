@@ -7,6 +7,8 @@ import {
 } from '@/assets';
 import { PATH } from '@/constants/path';
 import { useNavigate } from 'react-router-dom';
+import { useNewSelector } from '@/store';
+import { selectAccessToken } from '@/store/auth';
 import { useGameEndBookmark } from '@/hooks/game/useBalanceGameBookmark';
 import useToastModal from '@/hooks/modal/useToastModal';
 import ToastModal from '@/components/atoms/ToastModal/ToastModal';
@@ -29,7 +31,7 @@ const BalanceGameEndingSection = ({
   isMyEndBookmark,
 }: BalanceGameEndingSectionProps) => {
   const navigate = useNavigate();
-  const isGuest = !localStorage.getItem('accessToken');
+  const isGuest = !useNewSelector(selectAccessToken);
 
   const [shareModalOpen, setShareModalOpen] = useState<boolean>(false);
   const { isVisible, modalText, showToastModal } = useToastModal();

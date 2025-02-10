@@ -35,4 +35,7 @@ export const labelStyle = css({
   '@media (max-width: 430px)': {
     ...typo.Mobile.Text.Medium_8,
   },
+  '@media (max-width: 320px)': {
+    ...typo.Mobile.Text.Medium_7,
+  },
 });

@@ -249,6 +249,13 @@ const typo = {
         lineHeight: '1.3',
         letterSpacing: `${8 * -0.05}px`,
       },
+      Medium_7: {
+        fontFamily: 'Pretendard',
+        fontSize: '7.5px',
+        fontWeight: 500,
+        lineHeight: '1.3',
+        letterSpacing: `${8 * -0.05}px`,
+      },
     },
   },
 

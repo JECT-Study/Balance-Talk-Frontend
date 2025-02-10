@@ -21,8 +21,8 @@ export const useCreateGameMutation = (
       queryClient.invalidateQueries({
         queryKey: ['games'],
       });
-      showToastModal(SUCCESS.CREATEGAME.CREATE, () => {
-        navigate(`/${PATH.BALANCEGAME(gameId)}`);
+      showToastModal(SUCCESS.GAME.CREATE, () => {
+        navigate(`/${PATH.BALANCEGAME.VIEW(gameId)}`);
       });
     },
     onError: (err: AxiosErrorResponse) => {

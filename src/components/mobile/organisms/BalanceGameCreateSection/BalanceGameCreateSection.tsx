@@ -15,10 +15,12 @@ import * as S from './BalanceGameCreateSection.style';
 
 interface BalanceGameCreateSectionProps {
   existingGame?: GameSet;
+  gameSetId?: number;
 }
 
 const BalanceGameCreateSection = ({
   existingGame,
+  gameSetId,
 }: BalanceGameCreateSectionProps) => {
   const [gameStage, setGameStage] = useState<number>(0);
 
@@ -46,6 +48,7 @@ const BalanceGameCreateSection = ({
     setGameStage,
     setTagModalOpen,
     existingGame,
+    gameSetId,
   );
 
   return (

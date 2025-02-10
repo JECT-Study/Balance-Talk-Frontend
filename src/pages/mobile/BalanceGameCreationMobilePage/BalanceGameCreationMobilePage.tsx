@@ -6,16 +6,22 @@ import * as S from './BalanceGameCreationMobilePage.style';
 
 interface State {
   game: GameSet;
+  gameSetId: number;
 }
 
 const BalanceGameCreationMobilePage = () => {
   const location = useLocation();
   const state = location.state as State;
+
   const balanceGameData = state?.game;
+  const balanceGameSetId = state?.gameSetId;
 
   return (
     <div css={S.pageStyle}>
-      <BalanceGameCreateSection existingGame={balanceGameData} />
+      <BalanceGameCreateSection
+        existingGame={balanceGameData}
+        gameSetId={balanceGameSetId}
+      />
     </div>
   );
 };

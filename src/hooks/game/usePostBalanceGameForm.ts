@@ -1,4 +1,6 @@
+import { PATH } from '@/constants/path';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BalanceGame, GameSet, TempGame } from '@/types/game';
 import {
   createInitialGameStages,
@@ -18,13 +20,16 @@ import {
   validateBalanceGameForm,
   validateGameTag,
 } from './validateBalanceGameForm';
+import { useEditGamesMutation } from '../api/game/useEditGamesMutation';
 
 export const usePostBalanceGameForm = (
   gameStage: number,
   setGameStage: React.Dispatch<React.SetStateAction<number>>,
   setTagModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
   existingGame?: GameSet,
+  gameSetId?: number,
 ) => {
+  const navigate = useNavigate();
   const existingBalanceGame =
     existingGame && transformGameSetToBalanceGameSet(existingGame);
 
@@ -40,6 +45,7 @@ export const usePostBalanceGameForm = (
   const { isVisible, modalText, showToastModal } = useToastModal();
 
   const { mutate: createBalanceGame } = useCreateGameMutation(showToastModal);
+  const { mutate: editBalanceGame } = useEditGamesMutation();
 
   const { mutate: uploadFiles } = useFileUploadMutation();
   const { mutate: deleteFiles } = useDeleteFileMutation();
@@ -55,7 +61,24 @@ export const usePostBalanceGameForm = (
     if (!gameValidation.isValid) {
       return;
     }
-    createBalanceGame(form);
+
+    if (existingGame && gameSetId) {
+      editBalanceGame(
+        {
+          gameSetId,
+          data: form,
+        },
+        {
+          onSuccess: () => {
+            showToastModal(SUCCESS.GAME.EDIT, () => {
+              navigate(`/${PATH.BALANCEGAME.VIEW(gameSetId)}`);
+            });
+          },
+        },
+      );
+    } else {
+      createBalanceGame(form);
+    }
   };
 
   const handleTempBalanceGame = () => {

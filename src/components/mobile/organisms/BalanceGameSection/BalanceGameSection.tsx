@@ -103,7 +103,7 @@ const BalanceGameSection = ({
     {
       label: '수정',
       onClick: () => {
-        navigate(`/${PATH.CREATE.GAME}`, { state: { game } });
+        navigate(`/${PATH.CREATE.GAME}`, { state: { game, gameSetId } });
       },
     },
     { label: '삭제' },

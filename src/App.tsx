@@ -143,7 +143,7 @@ const App: React.FC = () => {
             />
             <Route
               path={PATH.BALANCEGAME.EDIT()}
-              element={<BalanceGameEditPage />}
+              element={!isMobile && <BalanceGameEditPage />}
             />
             <Route
               path={PATH.CHANGE.PROFILE}

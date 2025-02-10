@@ -9,10 +9,13 @@ const usePagination = (defaultPage = 1) => {
   const [page, setPage] = useState(initialPage);
 
   useEffect(() => {
-    setSearchParams((prevParams) => ({
-      ...Object.fromEntries(prevParams.entries()),
-      page: page.toString(),
-    }));
+    setSearchParams(
+      (prevParams) => ({
+        ...Object.fromEntries(prevParams.entries()),
+        page: page.toString(),
+      }),
+      { replace: true },
+    );
   }, [page, setSearchParams]);
 
   const handlePageChange = (newPage: number) => {

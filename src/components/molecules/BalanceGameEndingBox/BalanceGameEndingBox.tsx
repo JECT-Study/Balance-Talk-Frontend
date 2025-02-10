@@ -9,6 +9,8 @@ import ShareModal from '@/components/molecules/ShareModal/ShareModal';
 import LoginModal from '@/components/molecules/LoginModal/LoginModal';
 import useToastModal from '@/hooks/modal/useToastModal';
 import { useGameEndBookmark } from '@/hooks/game/useBalanceGameBookmark';
+import { useNewSelector } from '@/store';
+import { selectAccessToken } from '@/store/auth';
 import * as S from './BalanceGameEndingBox.style';
 
 export interface BalanceGameEndingBoxProps {
@@ -25,7 +27,7 @@ const BalanceGameEndingBox = ({
   isMyEndBookmark,
 }: BalanceGameEndingBoxProps) => {
   const currentURL: string = window.location.href;
-  const isGuest = !localStorage.getItem('accessToken');
+  const isGuest = !useNewSelector(selectAccessToken);
 
   const [loginModalOpen, setLoginModalOpen] = useState<boolean>(false);
   const [shareModalOpen, setShareModalOpen] = useState<boolean>(false);
